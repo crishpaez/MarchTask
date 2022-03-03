@@ -1,3 +1,5 @@
+using StarWars.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,6 +15,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+builder.Services.AddDbContext<StarWarsDb>(options => options.UseInMemory("StarWars"));
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
