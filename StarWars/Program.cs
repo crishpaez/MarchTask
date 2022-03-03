@@ -1,9 +1,11 @@
+using Microsoft.EntityFrameworkCore;
 using StarWars.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<StarWarsDb>(options => options.UseInMemoryDatabase("StarWars"));
 
 var app = builder.Build();
 
@@ -15,7 +17,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-builder.Services.AddDbContext<StarWarsDb>(options => options.UseInMemory("StarWars"));
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
