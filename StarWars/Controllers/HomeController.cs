@@ -18,6 +18,10 @@ namespace StarWars.Controllers
             return View();
         }
 
+        public IActionResult Player()
+        {
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
