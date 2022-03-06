@@ -6,10 +6,32 @@ namespace StarWars.Controllers
 {
     public class PlayerController : Controller
     {
-        public StarWarsDb Ctx { get; set; }
+        public StarWarsDb ctx { get; set; }
         public PlayerController(StarWarsDb ctx)
         {
-            this.Ctx = ctx;
+            this.ctx = ctx;
+        }
+        public IActionResult PlayerList(string name)
+        {
+            var model = new PlayersListModel();
+            model.PlayersList = ctx.Players.ToList();
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult Update(Player player)
+        {
+            ctx.Attach(player);
+            ctx.Entry(player).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            ctx.SaveChanges();
+            var model = ctx.Players.Find(player.Id);
+            return View(player);
+        }
+        public IActionResult Update(string id)
+        {
+            int Id = 0;
+            int.TryParse(id, out Id);
+            var model = ctx.Players.Find(Id);
+            return View(model);
         }
         public IActionResult Index(string id, string name, string description)
         {
@@ -18,12 +40,12 @@ namespace StarWars.Controllers
                 int Id = 0;
                 if (int.TryParse(id, out Id))
                 {
-                    Ctx.Players.Add(new Player { Id = Id, Name = name, Description = description });
-                    Ctx.SaveChanges();
+                    ctx.Players.Add(new Player { Id = Id, Name = name, Description = description });
+                    ctx.SaveChanges();
                 }
             }
             return View();
         }
-        
+
     }
 }
