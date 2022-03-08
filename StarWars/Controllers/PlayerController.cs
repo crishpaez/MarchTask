@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using StarWars.Models;
 using System.Diagnostics;
 
@@ -20,17 +21,40 @@ namespace StarWars.Controllers
         [HttpPost]
         public IActionResult Update(Player player)
         {
-            ctx.Attach(player);
-            ctx.Entry(player).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            //if (ModelState.IsValid)
+            //{
+            /*Correr la validación del lado del servidor*/
+            //}
+            if (player.Id == 0)
+            {
+                ctx.Players.Add(player);
+            }
+            else
+            {
+                ctx.Attach(player);
+                ctx.Entry(player).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            }
             ctx.SaveChanges();
-            var model = ctx.Players.Find(player.Id);
-            return View(player);
+            return RedirectToAction("PlayerList");
         }
         public IActionResult Update(string id)
         {
+            Player model;
             int Id = 0;
             int.TryParse(id, out Id);
-            var model = ctx.Players.Find(Id);
+            if (Id == 0)
+            {
+                model = new();
+            }
+            else
+            {
+                model = ctx.Players.Find(Id);
+            }
+            List<KeyValuePair<int, string>> types = new();
+            types.Add(new KeyValuePair<int, string>(1, "Jedi"));
+            types.Add(new KeyValuePair<int, string>(2, "Sith"));
+            SelectList items = new(types, "Key", "Value");
+            ViewBag.Types = items;
             return View(model);
         }
         public IActionResult Index(string id, string name, string description)
